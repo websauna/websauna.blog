@@ -1,0 +1,66 @@
+{# Template for home view #}
+
+{% extends "blog/base.html" %}
+
+{# Fill in metadata #}
+{% block description %}
+
+  {% set page_title=post.title %}
+  {% set page_description=post.excerpt %}
+  {% set page_logo=None %}
+  {% set page_facebook_app_id=None %}
+  {% set page_facebook_name=None %}
+  {% set page_twitter_handle=None %}
+  {% set page_article=True %}
+
+  {% if post.published_at %}
+    {% set page_published_at=post.published_at.isoformat() %}
+  {% else %}
+    {# Fallback when in draft #}
+    {% set page_published_at=post.created_at.isoformat() %}
+  {% endif %}
+
+  {% if post.updated_at %}
+    {% set page_modified_at=post.updated_at.isoformat() %}
+  {% else %}
+    {% set page_modified_at=post.created_at.isoformat() %}
+  {% endif %}
+
+  {% set page_author=post.author %}
+
+  {% set page_organization_logo=None %}
+  {% set page_organization_name=site_name %}
+
+  {% include "blog/social_head.html" %}
+{% endblock %}
+
+{% block blog_content %}
+
+  <div class="row">
+    <div class="col-md-12">
+
+      {% if request.has_permission("edit") %}
+        <div class="well">
+
+          <p>Admin actions</p>
+
+          <a class="btn btn-danger" href="{{ post_resource.post|admin_url }}">
+            View in admin
+          </a>
+        </div>
+      {% endif %}
+
+      <h1 id="heading-post" class="{{ post_resource.get_heading_class() }}">
+        {{ post.title }}
+      </h1>
+
+      {% include "blog/byline.html" %}
+
+      <div id="post-body-text">
+        {{ post_resource.get_body_as_html()|safe }}
+      </div>
+    </div>
+
+  </div>
+
+{% endblock %}

@@ -2,11 +2,22 @@
 
 {% extends "blog/base.html" %}
 
-{% block content %}
+{% block blog_content %}
+
+  {% if request.has_permission("edit") %}
+    <div class="well">
+
+      <p>Admin actions</p>
+
+      <a class="btn btn-danger" href="{{ post_admin|model_url }}">
+        Manage posts
+      </a>
+    </div>
+  {% endif %}
 
   <div class="row">
     <div class="col-md-12">
-      <h1 id="heading-blog">{{ blog_title }}</h1>
+        <h1 id="heading-blog">{{ blog_title }}</h1>
       {% include "blog/blog_roll_content.html" %}
     </div>
   </div>

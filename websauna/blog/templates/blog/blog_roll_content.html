@@ -5,13 +5,17 @@
     {% for post_resource in posts %}
       <div class="post">
         <h2>
-          <a href="{{ post_resource|model_url }}">
+          <a href="{{ post_resource|model_url }}" class="post-link {{ post_resource.get_heading_class() }}">
             {{ post_resource.post.title }}
           </a>
         </h2>
+
+        {% include "blog/byline.html" %}
+
         <div class="excerpt">
-          {{ post_resource.get_excerpt_as_html() }}
+          {{ post_resource.excerpt }}
         </div>
+
       </div>
     {% endfor %}
   {% else %}

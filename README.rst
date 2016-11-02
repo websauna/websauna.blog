@@ -1,4 +1,4 @@
-This is a Python package for websauna.blog, an addon for `Websauna framework <https://websauna.org>`_.
+This is a Python package for websauna.blog, an addon for `Websauna framework <https://websauna.org>`_. You can use it as a simple blog for your site or as an example of Websaunsa design patterns.
 
 Features
 ========
@@ -10,6 +10,10 @@ Features
 * Markdown based editing
 
 * RSS feed support
+
+* Post description and meta for Google, Facebook, Twitter
+
+* Basic unit and functional test suite
 
 Installation
 ============

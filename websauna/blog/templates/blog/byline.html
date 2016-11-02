@@ -1,0 +1,11 @@
+{% with post=post_resource.post %}
+  {% if post.published_at %}
+    <p class="text-muted">
+      By {{ post.author }} {{ (post.published_at or post.created_at)|friendly_time }}
+    </p>
+  {% else %}
+    <p class="text-danger">
+      Draft
+    </p>
+  {% endif %}
+{% endwith %}

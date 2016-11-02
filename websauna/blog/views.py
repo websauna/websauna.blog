@@ -31,11 +31,16 @@ class PostResource(Resource):
     def get_title(self) -> str:
         return self.post.title
 
-    def get_excerpt_as_html(self) -> str:
-        return markdown.markdown(self.post.excerpt)
-
     def get_body_as_html(self) -> str:
         return markdown.markdown(self.post.body)
+
+    def get_heading_class(self) -> str:
+        """Visually separate draft posts from published posts."""
+
+        if self.post.published_at:
+            return ""
+        else:
+            return "text-danger"
 
     @reify
     def __acl__(self) -> List[tuple]:
@@ -44,19 +49,23 @@ class PostResource(Resource):
         # Only publised posts are viewable to the audience
         if self.post.published_at:
             return [
-                (Allow, Everyone, "view")
+                (Allow, Everyone, "view"),
             ]
         else:
-            # Unpublished
+            # Draft post
             return [
+                (Allow, "group:admin", "view"),  # Only show drafts/previews for admin
                 (Deny, Everyone, "view"),
-                (Allow, "group:admin", "view"),
             ]
 
 
 @implementer(IContainer)
 class BlogContainer(Resource):
     """Contains all posts."""
+
+    __acl__ = [
+        (Allow, "group:admin", "edit"),  # Needed to render admin links in main UI
+    ]
 
     def get_title(self):
         return "Blog"
@@ -91,7 +100,7 @@ class BlogContainer(Resource):
         """
         return list(self.get_posts())
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: str) -> PostResource:
         """Traversing to blog post."""
         dbsession = self.request.dbsession
         item = dbsession.query(Post).filter_by(slug=item).one_or_none()
@@ -112,6 +121,10 @@ def blog_roll(blog_container, request):
     """Blog index view."""
     breadcrumbs = get_breadcrumbs(blog_container, request)
     title = request.registry.settings.get("blog_title", "Websauna blog")
+
+    # Get a hold to admin object so we can jump there
+    post_admin = request.admin["models"]["blog-posts"]
+
     return locals()
 
 
@@ -122,13 +135,10 @@ def blog_feed(blog_container, request):
 
 
 @view_config(route_name="blog", context=PostResource, name="", renderer="blog/post.html")
-def blog_post(res, request):
-    """Sing blog post."""
-    breadcrumbs = get_breadcrumbs(res, request)
-    post = res.post
-
-    # Format markdown
-    body = markdown.markdown(post.body)
+def blog_post(post_resource, request):
+    """Single blog post."""
+    breadcrumbs = get_breadcrumbs(post_resource, request)
+    post = post_resource.post
     return locals()
 
 
