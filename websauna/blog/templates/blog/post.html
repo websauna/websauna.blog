@@ -59,6 +59,9 @@
       <div id="post-body-text">
         {{ post_resource.get_body_as_html()|safe }}
       </div>
+
+      {% include "blog/commenting.html" %}
+
     </div>
 
   </div>

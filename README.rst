@@ -1,5 +1,7 @@
 This is a Python package for websauna.blog, an addon for `Websauna framework <https://websauna.org>`_. You can use it as a simple blog for your site or as an example of Websaunsa design patterns.
 
+.. contents:: :local:
+
 Features
 ========
 
@@ -15,8 +17,39 @@ Features
 
 * Basic unit and functional test suite
 
+* Disqus based commenting
+
 Installation
 ============
+
+Adding to your site
+-------------------
+
+Include addon in your application initializer:
+
+.. code-block:: python
+
+    class Initializer(websauna.system.Initializer):
+
+        def include_addons(self):
+            """Include this addon in the configuration."""
+            self.config.include("websauna.blog")
+
+
+Example settings:
+
+.. code-block:: ini
+
+    # Title on blog roll
+    blog.title = My little Websauna blog
+
+    # this is "websauna" part from websaua.disqus.com/embed.js univeral
+    # embed link
+    blog.disqus_id = websauna
+
+See ``nav.html`` example how to add a link to the blog in your site navigation.
+
+Go to admin, start adding blog posts.
 
 Local development mode
 ----------------------

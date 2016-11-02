@@ -139,6 +139,7 @@ def blog_post(post_resource, request):
     """Single blog post."""
     breadcrumbs = get_breadcrumbs(post_resource, request)
     post = post_resource.post
+    disqus_id = request.registry.settings.get("blog.disqus_id", "").strip()
     return locals()
 
 
