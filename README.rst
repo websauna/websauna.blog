@@ -19,6 +19,19 @@ Features
 
 * Disqus based commenting
 
+Screenshots
+===========
+
+Blog post
+---------
+
+.. image:: https://github.com/websauna/websauna.blog/raw/master/screenshots/post.png
+
+Admin
+-----
+
+.. image:: https://github.com/websauna/websauna.blog/raw/master/screenshots/admin.png
+
 Installation
 ============
 
