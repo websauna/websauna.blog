@@ -3,7 +3,7 @@
 import pytest
 from websauna.utils.time import now
 
-from ..models import Post
+from websauna.blog.models import Post
 
 
 @pytest.fixture

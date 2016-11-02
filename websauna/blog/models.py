@@ -27,6 +27,12 @@ class Post(Base):
     #: Human readable title
     title = sa.Column(sa.String(256), nullable=False)
 
+    #: Shown in the blog roll, RSS feed
+    excerpt = sa.Column(sa.Text(), nullable=False, default="")
+
+    #: Full body text as Markdown, shown on the post page
+    body = sa.Column(sa.Text(), nullable=False, default="")
+
     #: URL identifier string
     slug = sa.Column(sa.String(256), nullable=False, unique=True)
 

@@ -3,6 +3,7 @@ import logging
 
 import markdown
 from pyramid.decorator import reify
+from pyramid.interfaces import IAuthorizationPolicy
 from pyramid.security import Allow, Deny
 from pyramid.security import Everyone
 from pyramid.view import view_config
@@ -28,8 +29,11 @@ class PostResource(Resource):
         super(PostResource, self).__init__(request)
         self.post = post
 
-    def get_title(self):
+    def get_title(self) -> str:
         return self.post.title
+
+    def get_excerpt_as_html(self) -> str:
+        return markdown.markdown(self.post.excerpt)
 
     @reify
     def __acl__(self) -> List[tuple]:
@@ -55,23 +59,35 @@ class BlogContainer(Resource):
     def get_title(self):
         return "Blog"
 
-    def wrap_post(self, post: Post):
+    def wrap_post(self, post: Post) -> "PostResource":
         res = PostResource(self.request, post)
         return Resource.make_lineage(self, res, post.slug)
 
-    def get_posts(self, category: Optional[str]=None) -> Iterable[PostResource]:
-        """List all posts in this folder."""
+    def get_posts(self) -> Iterable[PostResource]:
+        """List all posts in this folder.
+
+        We filter out by current user permissions.
+        """
 
         dbsession = self.request.dbsession
-        q = dbsession.query(Post).order_by(Post.published_at())
+        q = dbsession.query(Post).order_by(Post.published_at.desc())
 
         for post in q:
-            yield self.wrap_post(post)
+            resource = self.wrap_post(post)
+            if self.request.has_permission("view", resource):
+                yield resource
 
     def items(self):
         """Sitemap support."""
         for resource in self.get_posts():
             yield resource.__name__, resource
+
+    def get_roll_posts(self) -> List[PostResource]:
+        """Get all blog posts.
+
+        We return a list instead of iterator, so we can test for empty blog condition in templates.
+        """
+        return list(self.get_posts())
 
     def __getitem__(self, item):
         """Traversing to blog post."""
@@ -89,10 +105,11 @@ def blog_container_factory(request) -> BlogContainer:
     return Resource.make_lineage(root, folder, "blog")
 
 
-@view_config(route_name="blog", context=BlogContainer, name="", renderer="blog/posts.html")
+@view_config(route_name="blog", context=BlogContainer, name="", renderer="blog/blog_roll.html")
 def blog_roll(blog_container, request):
     """Blog root view."""
     breadcrumbs = get_breadcrumbs(blog_container, request)
+    title = request.registry.settings.get("blog_title", "Websauna blog")
     return locals()
 
 

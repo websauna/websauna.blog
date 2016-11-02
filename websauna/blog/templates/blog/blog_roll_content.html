@@ -1,0 +1,20 @@
+{# Main loop to render all posts. #}
+
+{% with posts=blog_container.get_roll_posts() %}
+  {% if posts  %}
+    {% for post_resource in posts %}
+      <div class="post">
+        <h2>
+          <a href="{{ post_resource|model_url }}">
+            {{ post_resource.post.title }}
+          </a>
+        </h2>
+        <div class="excerpt">
+          {{ post_resource.get_excerpt_as_html() }}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p id="blog-no-posts">No blog posts available.</p>
+  {% endif %}
+{% endwith %}

@@ -1,11 +1,4 @@
-import time
-
-import transaction
-from flaky import flaky
-from pyramid.interfaces import IAuthorizationPolicy
-from pyramid.security import Everyone
-
-from ..models import Post
+from websauna.blog.models import Post
 
 
 def test_slugify(dbsession):

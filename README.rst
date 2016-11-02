@@ -5,6 +5,8 @@ Features
 
 * One blog per site
 
+* Drafts (admin only visible) and published posts
+
 * Markdown based editing
 
 * RSS feed support

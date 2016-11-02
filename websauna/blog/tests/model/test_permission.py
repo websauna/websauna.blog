@@ -1,11 +1,7 @@
-import time
-
-import transaction
-from flaky import flaky
 from pyramid.interfaces import IAuthorizationPolicy
 from pyramid.security import Everyone
 
-from ..views import blog_container_factory
+from websauna.blog.views import blog_container_factory
 
 
 def test_unpublished(test_request, unpublished_post):

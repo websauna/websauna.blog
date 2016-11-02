@@ -10,6 +10,11 @@ class Initializer(websauna.system.DemoInitializer):
         """Include this addon in the configuration."""
         self.config.include("websauna.blog")
 
+    def run(self):
+        super(Initializer, self).run()
+        # add demo
+        self.config.add_jinja2_search_path('websauna.blog:demotemplates', name='.html', prepend=True)
+
 
 def main(global_config, **settings):
     init = Initializer(global_config)

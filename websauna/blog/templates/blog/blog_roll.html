@@ -1,0 +1,14 @@
+{# Template for home view #}
+
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-md-12">
+      <h1 id="heading-blog">{{ blog_title }}</h1>
+      {% include "blog/blog_roll_content.html" %}
+    </div>
+  </div>
+
+{% endblock %}
