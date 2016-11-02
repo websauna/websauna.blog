@@ -2,7 +2,6 @@
 import sqlalchemy as sa
 import sqlalchemy.dialects.postgresql as psql
 from slugify import slugify
-from sqlalchemy.orm import Session
 from websauna.system.model.json import NestedMutationDict
 
 from websauna.system.model.meta import Base
@@ -42,6 +41,11 @@ class Post(Base):
     #: Mixed bag of all other properties
     other_data = sa.Column(NestedMutationDict.as_mutable(psql.JSONB), default=dict)
 
+    # By default order latest posts first
+    __mapper_args__ = {
+        "order_by": created_at.desc()
+    }
+
     def ensure_slug(self, dbsession) -> str:
         """Make sure post has a slug.
 
@@ -50,17 +54,20 @@ class Post(Base):
         :return: Generated slug as a string
         """
 
-        if not self.slug:
+        assert self.title
 
-            for attempt in range(1, 100):
+        if self.slug:
+            return
 
-                generated_slug = slugify(self.title)
-                if attempt >= 2:
-                    generated_slug += "-" + str(attempt)
+        for attempt in range(1, 100):
 
-                # Check for existing hit
-                if not dbsession.query(Post).filter_by(slug=generated_slug).one_or_none():
-                    self.slug = generated_slug
-                    return self.slug
+            generated_slug = slugify(self.title)
+            if attempt >= 2:
+                generated_slug += "-" + str(attempt)
+
+            # Check for existing hit
+            if not dbsession.query(Post).filter_by(slug=generated_slug).one_or_none():
+                self.slug = generated_slug
+                return self.slug
 
         raise RuntimeError("Could not generate slug for {}".format(self.title))

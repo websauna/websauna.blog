@@ -1,0 +1,76 @@
+{# HTML metadata #}
+
+<title>{{ page_title }}</title>
+<meta name="description" value="{{ page_description }}">
+
+{# Facebook metadata #}
+{% if page_facebook_app_id %}
+  <meta property="og:site_name" content="{{ page_facebook_name }}">
+  <meta property="og:title" content="{{ page_title }}">
+  <meta property="og:url"  content="{{ request.path_url }}" />
+  <meta property="og:description" content="{{ page_description }}" />
+  <meta property="fb:app_id" content="{{ page_facebook_app_id }}" />
+  <meta property="og:image" content="{{ page_logo }}" />
+{% endif %}
+
+{# Twitter metadata #}
+{% if page_twitter_handle %}
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@TokenMarket" />
+  <meta name="twitter:title" content="{{ page_title }}" />
+  <meta name="twitter:description" content="{{ page_description }}" />
+  <meta name="twitter:image" content="{{ page_logo }}" />
+{% endif %}
+
+{# Google Article #}
+{# https://search.google.com/structured-data/testing-tool #}
+{# https://developers.google.com/search/docs/data-types/articles #}
+
+{% if page_article %}
+  <script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "NewsArticle",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://google.com/article"
+    },
+    "headline": "{{ page_title }}",
+    "image": {
+      "@type": "ImageObject",
+      "url": "{{ page_logo }}",
+      "width": 512,
+      "height": 512,
+    },
+    "author": {
+      "@type": "Person",
+      "name": "{{ page_author }}"
+    },
+    "datePublished": "{{ page_published_at }}",
+    "dateModified": "{{ page_modified_at }}",
+     "publisher": {
+      "@type": "Organization",
+      "name": "{{ page_organization_name }}",
+      {# Max 600x60 #}
+      "logo": {
+        "@type": "ImageObject",
+        "url": "{{ page_organization_logo }}",
+        "width": 446,
+        "height": 60,
+      }
+    },
+    "description": "{{ page_description }}"
+  }
+  </script>
+{% endif %}
+
+{# Site name #}
+{# https://developers.google.com/search/docs/data-types/sitename #}
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "{{ site_name }}",
+    "url": "{{ site_url }}"
+  }
+</script>

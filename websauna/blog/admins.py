@@ -1,15 +1,8 @@
 
-from pyramid.security import Deny, Allow, Everyone
 from websauna.system.admin.modeladmin import ModelAdmin, model_admin
 from websauna.system.crud import Base64UUIDMapper
-from websauna.wallet.ethereum.utils import eth_address_to_bin
-from websauna.wallet.models import CryptoAddressAccount
 
-from .models import UserOwnedAccount, Post
-from .models import Asset
-from .models import CryptoAddress
-from .models import Account
-from .models import     AssetNetwork
+from .models import Post
 
 
 @model_admin(traverse_id="blog-posts")

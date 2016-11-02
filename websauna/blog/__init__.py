@@ -11,6 +11,13 @@ class AddonInitializer:
     def __init__(self, config:Configurator):
         self.config = config
 
+    @after(Initializer.configure_admin)
+    def configure_admin(self):
+        from . import admins
+        from . import adminviews
+        self.config.scan(admins)
+        self.config.scan(adminviews)
+
     @after(Initializer.configure_templates)
     def configure_templates(self):
         """Include our package templates folder in Jinja 2 configuration."""

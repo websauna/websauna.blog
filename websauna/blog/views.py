@@ -1,9 +1,8 @@
-from typing import Iterable, Optional
+from typing import Iterable
 import logging
 
 import markdown
 from pyramid.decorator import reify
-from pyramid.interfaces import IAuthorizationPolicy
 from pyramid.security import Allow, Deny
 from pyramid.security import Everyone
 from pyramid.view import view_config
@@ -34,6 +33,9 @@ class PostResource(Resource):
 
     def get_excerpt_as_html(self) -> str:
         return markdown.markdown(self.post.excerpt)
+
+    def get_body_as_html(self) -> str:
+        return markdown.markdown(self.post.body)
 
     @reify
     def __acl__(self) -> List[tuple]:
@@ -107,7 +109,7 @@ def blog_container_factory(request) -> BlogContainer:
 
 @view_config(route_name="blog", context=BlogContainer, name="", renderer="blog/blog_roll.html")
 def blog_roll(blog_container, request):
-    """Blog root view."""
+    """Blog index view."""
     breadcrumbs = get_breadcrumbs(blog_container, request)
     title = request.registry.settings.get("blog_title", "Websauna blog")
     return locals()
@@ -121,7 +123,7 @@ def blog_feed(blog_container, request):
 
 @view_config(route_name="blog", context=PostResource, name="", renderer="blog/post.html")
 def blog_post(res, request):
-    """View post."""
+    """Sing blog post."""
     breadcrumbs = get_breadcrumbs(res, request)
     post = res.post
 
