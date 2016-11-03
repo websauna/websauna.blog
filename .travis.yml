@@ -2,6 +2,7 @@ language: python
 
 addons:
   postgresql: "9.4"
+  firefox: "45.0"
 
 services:
   - postgresql
@@ -30,6 +31,12 @@ before_script:
   - "sh -e /etc/init.d/xvfb start"
   - psql -c 'create database blog_test;' -U postgres
   - pip install -U pip
+
+# Downgrade Firefox until geckodriver + marionette matures
+  - tar -xjf /tmp/firefox-45.0.tar.bz2 --directory /tmp
+  - export PATH="/tmp/firefox:$PATH"
+  - echo "Using firefox version `firefox --version`"
+
 
 script:
   # https://pypi.python.org/pypi/coverage_enable_subprocess
