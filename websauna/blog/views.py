@@ -68,7 +68,7 @@ class BlogContainer(Resource):
     ]
 
     def get_title(self):
-        title = self.request.registry.settings.get("blog_title", "Websauna blog")
+        title = self.request.registry.settings.get("blog.title", "Websauna blog")
         return title
 
     def wrap_post(self, post: Post) -> "PostResource":

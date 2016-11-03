@@ -23,7 +23,6 @@ class AddonInitializer:
         """Include our package templates folder in Jinja 2 configuration."""
 
         self.config.add_jinja2_search_path('websauna.blog:templates', name='.html', prepend=False)
-        self.config.add_jinja2_search_path('websauna.blog:templates', name='.xml', prepend=False)
 
         from . import templatevars
         self.config.include(templatevars)

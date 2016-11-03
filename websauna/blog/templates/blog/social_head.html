@@ -1,4 +1,4 @@
-{# HTML metadata #}
+{# HTML metadata for Google, Facebook and Twitter #}
 
 <title>{{ page_title }}</title>
 <meta name="description" value="{{ page_description }}">
@@ -36,28 +36,32 @@
       "@id": "https://google.com/article"
     },
     "headline": "{{ page_title }}",
-    "image": {
-      "@type": "ImageObject",
-      "url": "{{ page_logo }}",
-      "width": 512,
-      "height": 512,
-    },
+    {% if page_logo %}
+      "image": {
+        "@type": "ImageObject",
+        "url": "{{ page_logo }}",
+        "width": {{ page_logo_width }},
+        "height": {{ page_logo_height }},
+      },
+    {% endif %}
     "author": {
       "@type": "Person",
       "name": "{{ page_author }}"
     },
     "datePublished": "{{ page_published_at }}",
     "dateModified": "{{ page_modified_at }}",
-     "publisher": {
+    "publisher": {
       "@type": "Organization",
       "name": "{{ page_organization_name }}",
       {# Max 600x60 #}
-      "logo": {
-        "@type": "ImageObject",
-        "url": "{{ page_organization_logo }}",
-        "width": 446,
-        "height": 60,
-      }
+      {% if page_organization_logo %}
+        "logo": {
+          "@type": "ImageObject",
+          "url": "{{ page_organization_logo }}",
+          "width": {{ page_organization_logo_width }},
+          "height": {{ page_organization_logo_height }}
+        }
+      {% endif %}
     },
     "description": "{{ page_description }}"
   }
