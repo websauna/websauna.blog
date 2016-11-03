@@ -1,4 +1,9 @@
+.. |ci| image:: https://travis-ci.org/websauna/websauna.svg
+    :target: https://travis-ci.org/websauna/websauna/
+
 This is a Python package for websauna.blog, an addon for `Websauna framework <https://websauna.org>`_. You can use it as a simple blog for your site or as an example of Websaunsa design patterns.
+
+|ci|
 
 .. contents:: :local:
 
