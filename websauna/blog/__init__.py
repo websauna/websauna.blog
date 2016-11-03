@@ -39,6 +39,9 @@ class AddonInitializer:
         from . import views
         self.config.scan(views)
 
+        from . import rss
+        self.config.scan(rss)
+
     def run(self):
 
         # This will make sure our initialization hooks are called later

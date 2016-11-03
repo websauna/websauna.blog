@@ -5,19 +5,19 @@ This is a Python package for websauna.blog, an addon for `Websauna framework <ht
 Features
 ========
 
-* One blog per site
+* Markdown based editing
+
+* `Disqus <https://disqus.com>`_ based commenting
+
+* Post description and meta for Google (SEO), Facebook, Twitter
 
 * Drafts (admin only visible) and published posts
 
-* Markdown based editing
-
-* RSS feed support
-
-* Post description and meta for Google, Facebook, Twitter
+* RSS feed
 
 * Basic unit and functional test suite
 
-* Disqus based commenting
+* One blog per site
 
 Screenshots
 ===========

@@ -128,12 +128,6 @@ def blog_roll(blog_container, request):
     return locals()
 
 
-@view_config(route_name="blog", context=BlogContainer, name="rss", renderer="blog/rss.xml")
-def blog_feed(blog_container, request):
-    """RSS feed for the blog."""
-    return locals()
-
-
 @view_config(route_name="blog", context=PostResource, name="", renderer="blog/post.html")
 def blog_post(post_resource, request):
     """Single blog post."""

@@ -35,7 +35,7 @@ setup(name='websauna.blog',
       include_package_data=True,
       zip_safe=False,
       test_suite='websauna.blog',
-      install_requires=['websauna', 'Markdown'],
+      install_requires=['websauna', 'Markdown', 'rfeed'],
       extras_require={
 
         # Dependencies for running test suite
