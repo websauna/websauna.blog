@@ -11,13 +11,13 @@ Features
 
 * Post description and meta for Google (SEO), Facebook, Twitter
 
+* Blog post management through Websauna admin interface
+
 * Drafts (admin only visible) and published posts
 
 * RSS feed
 
 * Basic unit and functional test suite
-
-* One blog per site
 
 Note that this addon is not intended to be used as is, but more of an example. You most likely want to fork it over and modify for your own needs.
 
