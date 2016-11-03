@@ -45,6 +45,10 @@ class PostSchema(CSRFSchema):
             required=True,
             widget=deform.widget.TextAreaWidget(rows=80),)
 
+    tags = colander.SchemaNode(colander.String(),
+            description="Comma separated.",
+            required=False)
+
     def dictify(self, obj: Post) -> dict:
         """Serialize SQLAlchemy model instance to nested dictionary appstruct presentation."""
         appstruct = dictify(self, obj)
@@ -80,6 +84,7 @@ class PostAdd(DefaultAdd):
     def add_object(self, obj):
         """Add objects to transaction lifecycle and flush newly created object to persist storage to give them id."""
         dbsession = self.context.get_dbsession()
+        # Make sure we autogenerate a slug
         obj.ensure_slug(dbsession)
         dbsession.add(obj)
         dbsession.flush()
@@ -94,12 +99,6 @@ class PostEdit(DefaultEdit):
         schema = PostSchema().bind(request=self.request)
         form = deform.Form(schema, buttons=self.get_buttons(), resource_registry=ResourceRegistry(self.request))
         return form
-
-    def initialize_object(self, form, appstruct: dict, obj: Post):
-        """Record values from the form on a freshly created object."""
-
-        # Copy values from dictified Colander presentation to SQLAlchemy model instance
-        objectify(form.schema, appstruct, obj)
 
 
 @view_overrides(context=PostAdmin.Resource)
@@ -121,7 +120,6 @@ class PostShow(DefaultShow):
         buttons.append(view_on_site)
 
         # Publish button
-
         if not self.get_object().published_at:
             change_publish_status = TraverseLinkButton(id="btn-change-publish-status", name="Publish", view_name="change_publish_status")
         else:
