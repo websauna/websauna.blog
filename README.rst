@@ -14,7 +14,7 @@ Features
 
 * `Disqus <https://disqus.com>`_ based commenting
 
-* Post description and meta for Google (SEO), Facebook, Twitter
+* Post description and meta for Google (SEO), Facebook, Twitter. Sitemap support and Google Article metadata support.
 
 * Blog post management through Websauna admin interface
 
