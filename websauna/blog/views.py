@@ -46,7 +46,7 @@ class PostResource(Resource):
     def __acl__(self) -> List[tuple]:
         """Dynamically give blog post permissions."""
 
-        # Only publised posts are viewable to the audience
+        # Only published posts are viewable to the audience
         if self.post.published_at:
             return [
                 (Allow, Everyone, "view"),
@@ -111,7 +111,7 @@ class BlogContainer(Resource):
 
 
 def blog_container_factory(request) -> BlogContainer:
-    """Set up __parent__ and __name__ pointers required for traversal."""
+    """Set up __parent__ and __name__ pointers for BlogContainer required for traversal."""
     folder = BlogContainer(request)
     root = Root.root_factory(request)
     return Resource.make_lineage(root, folder, "blog")
