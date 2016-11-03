@@ -38,6 +38,9 @@ class Post(Base):
     #: Author name as plain text
     author = sa.Column(sa.String(256), nullable=True)
 
+    #: Tags stored as comma separated string. Please note that in the long run this should be changed to JSONB list . This is now plain text due to simplicity of demostration.
+    tags = sa.Column(sa.String(256), nullable=False, default="")
+
     #: Mixed bag of all other properties
     other_data = sa.Column(NestedMutationDict.as_mutable(psql.JSONB), default=dict)
 

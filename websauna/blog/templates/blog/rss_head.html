@@ -1,0 +1,7 @@
+{# Add RSS link to the <head> for browsers and crawlers
+
+https://www.petefreitag.com/item/384.cfm
+#}
+
+<link rel="alternate" type="application/rss+xml"  title="{{ blog_container.get_title() }}" href="{{ blog_container|model_url('rss') }}" />
+

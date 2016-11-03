@@ -35,7 +35,7 @@ class PostResource(Resource):
         return markdown.markdown(self.post.body)
 
     def get_heading_class(self) -> str:
-        """Visually separate draft posts from published posts."""
+        """Visually separate draft posts from published posts when viewing blog roll as admin."""
 
         if self.post.published_at:
             return ""
@@ -64,11 +64,12 @@ class BlogContainer(Resource):
     """Contains all posts."""
 
     __acl__ = [
-        (Allow, "group:admin", "edit"),  # Needed to render admin links in main UI
+        (Allow, "group:admin", "edit"),  # Needed to render admin edit links in main UI
     ]
 
     def get_title(self):
-        return "Blog"
+        title = self.request.registry.settings.get("blog_title", "Websauna blog")
+        return title
 
     def wrap_post(self, post: Post) -> "PostResource":
         res = PostResource(self.request, post)
@@ -120,7 +121,6 @@ def blog_container_factory(request) -> BlogContainer:
 def blog_roll(blog_container, request):
     """Blog index view."""
     breadcrumbs = get_breadcrumbs(blog_container, request)
-    title = request.registry.settings.get("blog_title", "Websauna blog")
 
     # Get a hold to admin object so we can jump there
     post_admin = request.admin["models"]["blog-posts"]

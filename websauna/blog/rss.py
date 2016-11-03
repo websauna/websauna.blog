@@ -35,6 +35,7 @@ def generate_rss(blog_container: BlogContainer):
 
     request = blog_container.request
     blog_title = request.registry.settings.get("blog.title")
+    blog_email = request.registry.settings.get("blog.rss_feed_email", "no-reply@example.com")
 
     items = []
     for post_resource in blog_container.get_posts():
@@ -43,7 +44,8 @@ def generate_rss(blog_container: BlogContainer):
             title=post.title,
             link=request.resource_url(post_resource),
             description="This is the description of the first article",
-            author=post.author,
+            author=blog_email,
+            creator=post.author,
             guid=rfeed.Guid(str(post.id)),
             pubDate=post.published_at,
             extensions=[ContentItem(post_resource)])
