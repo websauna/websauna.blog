@@ -10,7 +10,11 @@
   <meta property="og:url"  content="{{ request.path_url }}" />
   <meta property="og:description" content="{{ page_description }}" />
   <meta property="fb:app_id" content="{{ page_facebook_app_id }}" />
-  <meta property="og:image" content="{{ page_logo }}" />
+  {# 1200x630 preferred #}
+  {% if page_facebook_image %}
+    <meta property="og:image" content="{{ page_facebook_image }}" />
+  {% endif %}
+
   <meta property="og:type" content="{{ page_facebook_type }}" />
 {% endif %}
 
