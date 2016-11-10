@@ -6,6 +6,7 @@ from pyramid.decorator import reify
 from pyramid.security import Allow, Deny
 from pyramid.security import Everyone
 from pyramid.view import view_config
+from websauna.system.core.views.redirect import redirect_view
 from zope.interface import implementer
 
 from websauna.system.core.breadcrumbs import get_breadcrumbs
@@ -61,7 +62,7 @@ class PostResource(Resource):
 
 @implementer(IContainer)
 class BlogContainer(Resource):
-    """Contains all posts."""
+    """Contains all posts, mounted at /blog/."""
 
     __acl__ = [
         (Allow, "group:admin", "edit"),  # Needed to render admin edit links in main UI
@@ -72,6 +73,7 @@ class BlogContainer(Resource):
         return title
 
     def wrap_post(self, post: Post) -> "PostResource":
+        """Convert raw SQLAlchemy Post instance to traverse and permission aware PostResource with its public URL."""
         res = PostResource(self.request, post)
         return Resource.make_lineage(self, res, post.slug)
 
@@ -145,3 +147,6 @@ def get_post_resource(request: Request, slug: str) -> PostResource:
         return container[slug]
     except KeyError:
         return None
+
+# Convenience redirect /blog -> /blog/
+_redirect = redirect_view("/blog", new_path="/blog/", status_code=302)
