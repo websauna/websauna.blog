@@ -13,6 +13,8 @@
   {# 1200x630 preferred #}
   {% if page_facebook_image %}
     <meta property="og:image" content="{{ page_facebook_image }}" />
+    <meta property="og:image:width" content="{{ page_facebook_image_width }}" />
+    <meta property="og:image:height" content="{{ page_facebook_image_height }}" />
   {% endif %}
 
   <meta property="og:type" content="{{ page_facebook_type }}" />
