@@ -33,7 +33,7 @@ def deferred_is_good_slug(node, kwargs):
     request = kwargs["request"]
 
     # Context is available on the edit form only
-    context = kwargs.get("context")  # type: PostAdmin.Resourc
+    context = kwargs.get("context")  # type: PostAdmin.Resource
     dbsession = request.dbsession
 
     if context:
