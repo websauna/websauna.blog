@@ -1,0 +1,10 @@
+{% if request.has_permission("edit") %}
+  <div class="well">
+
+    <p>Admin actions</p>
+
+    <a class="btn btn-danger" href="{{ post_admin|model_url }}">
+      Manage posts
+    </a>
+  </div>
+{% endif %}

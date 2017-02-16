@@ -13,10 +13,12 @@ def unpublished_post_id(dbsession):
         post = Post()
         post.title = "Hello world"
         post.body = "All roads lead to Toholampi åäö"
+        post.tags = ["mytag"]
         post.ensure_slug(dbsession)
         dbsession.add(post)
         dbsession.flush()
         return post.id
+
 
 @pytest.fixture
 def published_post_id(dbsession, unpublished_post_id):

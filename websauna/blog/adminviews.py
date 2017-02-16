@@ -57,6 +57,7 @@ def deferred_is_good_slug(node, kwargs):
 
     return is_good_slug
 
+
 class PostSchema(CSRFSchema):
     """Form to add/edit blog posts"""
 
@@ -81,7 +82,7 @@ class PostSchema(CSRFSchema):
     body = colander.SchemaNode(colander.String(),
             description="Use Markdown formatting.",
             required=True,
-            widget=deform.widget.TextAreaWidget(rows=40),)
+            widget=deform.widget.TextAreaWidget(rows=40, css_class="body-text"))
 
 
     def dictify(self, obj: Post) -> dict:
@@ -91,6 +92,10 @@ class PostSchema(CSRFSchema):
 
     def objectify(self, appstruct: dict, obj: Post):
         """Store the dictionary data from the form submission on the object."""
+
+        # Clean tag list
+        appstruct["tags"] = ",".join([t.strip() for t in appstruct["tags"].split(",")])
+
         objectify(self, appstruct, obj)
 
 
@@ -136,7 +141,7 @@ class PostEdit(DefaultEdit):
         return form
 
 
-@view_overrides(context=PostAdmin.Resource)
+@view_overrides(context=PostAdmin.Resource, renderer="admin/post_show.html")
 class PostShow(DefaultShow):
     """Show blog post technical details."""
 

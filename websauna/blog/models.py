@@ -1,4 +1,6 @@
 """Place your SQLAlchemy models in this file."""
+from typing import List
+
 import sqlalchemy as sa
 import sqlalchemy.dialects.postgresql as psql
 from slugify import slugify
@@ -74,3 +76,6 @@ class Post(Base):
                 return self.slug
 
         raise RuntimeError("Could not generate slug for {}".format(self.title))
+
+    def get_tag_list(self) -> List[str]:
+        return self.tags.split(",")

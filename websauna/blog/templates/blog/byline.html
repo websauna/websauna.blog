@@ -1,7 +1,8 @@
 {% with post=post_resource.post %}
   {% if post.published_at %}
     <p class="text-muted">
-      By {{ post.author }} {{ (post.published_at or post.created_at)|friendly_time }}
+      By {{ post.author }} {{ (post.published_at or post.created_at)|friendly_time }}.
+      {% include "blog/tags_line.html" %}
     </p>
   {% else %}
     <p class="text-danger">

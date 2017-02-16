@@ -33,6 +33,7 @@ class AddonInitializer:
         Let the config scanner to pick ``@simple_route`` definitions from scanned modules. Alternative you can call ``config.add_route()`` and ``config.add_view()`` here.
         """
 
+        self.config.add_route('blog_tag', '/blog/tag/{tag}', factory="websauna.blog.views.blog_container_factory")
         self.config.add_route('blog', '/blog/*traverse', factory="websauna.blog.views.blog_container_factory")
 
         from . import views

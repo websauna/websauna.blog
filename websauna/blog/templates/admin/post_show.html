@@ -1,0 +1,14 @@
+{% extends "crud/show.html" %}
+
+{% block extra_head %}
+  <style>
+    .body-text {
+      white-space: pre;
+    }
+  </style>
+{% endblock %}
+
+{% block crud_content %}
+  {# One could override body rendering here #}
+  {{  super() }}
+{% endblock %}

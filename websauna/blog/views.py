@@ -6,6 +6,7 @@ from pyramid.decorator import reify
 from pyramid.security import Allow, Deny
 from pyramid.security import Everyone
 from pyramid.view import view_config
+from websauna.system.core.route import simple_route
 from websauna.system.core.views.redirect import redirect_view
 from zope.interface import implementer
 
@@ -91,6 +92,12 @@ class BlogContainer(Resource):
             if self.request.has_permission("view", resource):
                 yield resource
 
+    def get_posts_by_tag(self, tag: str) -> Iterable[PostResource]:
+        """Lists all posts by a tag within the permissions of a current user."""
+        for post in self.get_posts():
+            if tag in post.get_tag_list():
+                yield tag
+
     def items(self):
         """Sitemap support."""
         for resource in self.get_posts():
@@ -105,11 +112,14 @@ class BlogContainer(Resource):
 
     def __getitem__(self, item: str) -> PostResource:
         """Traversing to blog post."""
+
         dbsession = self.request.dbsession
         item = dbsession.query(Post).filter_by(slug=item).one_or_none()
         if item:
             return self.wrap_post(item)
+
         raise KeyError()
+
 
 
 def blog_container_factory(request) -> BlogContainer:
@@ -123,6 +133,23 @@ def blog_container_factory(request) -> BlogContainer:
 def blog_roll(blog_container, request):
     """Blog index view."""
     breadcrumbs = get_breadcrumbs(blog_container, request)
+
+    # Get a hold to admin object so we can jump there
+    post_admin = request.admin["models"]["blog-posts"]
+
+    return locals()
+
+
+@view_config(route_name="blog_tag", renderer="blog/tag_roll.html")
+def tag(blog_container: BlogContainer, request: Request):
+    """Tag roll."""
+
+    tag = request.matchdict["tag"]
+    current_view_url = request.url
+    current_view_name = "Posts tagged {}".format(tag)
+    breadcrumbs = get_breadcrumbs(blog_container, request, current_view_name=current_view_name, current_view_url=current_view_url)
+
+    tagged_post = blog_container.get_posts_by_tag(tag)
 
     # Get a hold to admin object so we can jump there
     post_admin = request.admin["models"]["blog-posts"]
