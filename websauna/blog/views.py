@@ -149,7 +149,8 @@ def tag(blog_container: BlogContainer, request: Request):
     current_view_name = "Posts tagged {}".format(tag)
     breadcrumbs = get_breadcrumbs(blog_container, request, current_view_name=current_view_name, current_view_url=current_view_url)
 
-    tagged_posts = blog_container.get_posts_by_tag(tag)
+    # wrap to list() to handle empty result correctly
+    tagged_posts = list(blog_container.get_posts_by_tag(tag))
 
     # Get a hold to admin object so we can jump there
     post_admin = request.admin["models"]["blog-posts"]
