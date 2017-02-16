@@ -94,9 +94,9 @@ class BlogContainer(Resource):
 
     def get_posts_by_tag(self, tag: str) -> Iterable[PostResource]:
         """Lists all posts by a tag within the permissions of a current user."""
-        for post in self.get_posts():
-            if tag in post.get_tag_list():
-                yield tag
+        for resource in self.get_posts():
+            if tag in resource.post.get_tag_list():
+                yield resource
 
     def items(self):
         """Sitemap support."""
@@ -149,7 +149,7 @@ def tag(blog_container: BlogContainer, request: Request):
     current_view_name = "Posts tagged {}".format(tag)
     breadcrumbs = get_breadcrumbs(blog_container, request, current_view_name=current_view_name, current_view_url=current_view_url)
 
-    tagged_post = blog_container.get_posts_by_tag(tag)
+    tagged_posts = blog_container.get_posts_by_tag(tag)
 
     # Get a hold to admin object so we can jump there
     post_admin = request.admin["models"]["blog-posts"]

@@ -13,7 +13,7 @@ def unpublished_post_id(dbsession):
         post = Post()
         post.title = "Hello world"
         post.body = "All roads lead to Toholampi åäö"
-        post.tags = ["mytag"]
+        post.tags = "mytag,mytag2"
         post.ensure_slug(dbsession)
         dbsession.add(post)
         dbsession.flush()
