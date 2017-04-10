@@ -6,7 +6,6 @@ from pyramid.decorator import reify
 from pyramid.security import Allow, Deny
 from pyramid.security import Everyone
 from pyramid.view import view_config
-from websauna.system.core.route import simple_route
 from websauna.system.core.views.redirect import redirect_view
 from zope.interface import implementer
 
@@ -109,6 +108,17 @@ class BlogContainer(Resource):
         We return a list instead of iterator, so we can test for empty blog condition in templates.
         """
         return list(self.get_posts())
+
+    def get_published_posts(self, limit=5) -> Iterable[PostResource]:
+        """Iterate all published posts in this folder."""
+
+        dbsession = self.request.dbsession
+        # q = dbsession.query(Post).filter(Post.published_at != None).order_by(Post.published_at.desc())
+        q = dbsession.query(Post)
+
+        for post in q.all()[0:limit]:
+            resource = self.wrap_post(post)
+            yield resource
 
     def __getitem__(self, item: str) -> PostResource:
         """Traversing to blog post."""
