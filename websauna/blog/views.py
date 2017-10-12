@@ -8,6 +8,7 @@ from pyramid.security import Everyone
 from pyramid.view import view_config
 from websauna.system.core.views.redirect import redirect_view
 from zope.interface import implementer
+from websauna.system.crud.paginator import DefaultPaginator
 
 from websauna.system.core.breadcrumbs import get_breadcrumbs
 from websauna.system.core.interfaces import IContainer
@@ -146,6 +147,10 @@ def blog_roll(blog_container, request):
 
     # Get a hold to admin object so we can jump there
     post_admin = request.admin["models"]["blog-posts"]
+    paginator = DefaultPaginator()
+    blog_posts = list(blog_container.get_roll_posts())
+    count = len(blog_posts)
+    batch = paginator.paginate(blog_posts, request, count)
 
     return locals()
 
@@ -159,11 +164,13 @@ def tag(blog_container: BlogContainer, request: Request):
     current_view_name = "Posts tagged {}".format(tag)
     breadcrumbs = get_breadcrumbs(blog_container, request, current_view_name=current_view_name, current_view_url=current_view_url)
 
-    # wrap to list() to handle empty result correctly
-    tagged_posts = list(blog_container.get_posts_by_tag(tag))
-
     # Get a hold to admin object so we can jump there
     post_admin = request.admin["models"]["blog-posts"]
+
+    paginator = DefaultPaginator()
+    tagged_posts = list(blog_container.get_posts_by_tag(tag))
+    count = len(tagged_posts)
+    batch = paginator.paginate(tagged_posts, request, count)
 
     return locals()
 
