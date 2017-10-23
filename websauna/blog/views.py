@@ -2,14 +2,16 @@ from typing import Iterable
 import logging
 
 import markdown
+from zope.interface import implementer
 from pyramid.decorator import reify
 from pyramid.security import Allow, Deny
 from pyramid.security import Everyone
 from pyramid.view import view_config
-from websauna.system.core.views.redirect import redirect_view
 from zope.interface import implementer
-from websauna.system.crud.paginator import DefaultPaginator
 
+from websauna.system.core.views.redirect import redirect_view
+from websauna.system.crud.paginator import DefaultPaginator
+from websauna.system.core.views.redirect import redirect_view
 from websauna.system.core.breadcrumbs import get_breadcrumbs
 from websauna.system.core.interfaces import IContainer
 from websauna.system.core.root import Root
@@ -114,8 +116,9 @@ class BlogContainer(Resource):
         """Iterate all published posts in this folder."""
 
         dbsession = self.request.dbsession
-        # q = dbsession.query(Post).filter(Post.published_at != None).order_by(Post.published_at.desc())
-        q = dbsession.query(Post)
+        q = dbsession.query(Post).filter(
+            Post.published_at != None
+        ).order_by(Post.published_at.desc())
 
         for post in q.all()[0:limit]:
             resource = self.wrap_post(post)
