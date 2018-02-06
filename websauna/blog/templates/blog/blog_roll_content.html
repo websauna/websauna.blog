@@ -20,6 +20,10 @@
 
     </div>
   {% endfor %}
+
+  {% block paginator %}
+    {% include "crud/paginator.html" %}
+  {% endblock %}
 {% else %}
   <p id="blog-no-posts">No blog posts found.</p>
 {% endif %}
