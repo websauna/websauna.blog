@@ -1,9 +1,10 @@
 """py.test testing fixtures"""
 
 import pytest
-from websauna.utils.time import now
 
+# Websauna
 from websauna.blog.models import Post
+from websauna.utils.time import now
 
 
 @pytest.fixture

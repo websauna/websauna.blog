@@ -1,56 +1,75 @@
 language: python
+dist: trusty
 
 addons:
   postgresql: "9.4"
-  firefox: "45.0"
+  chrome: stable
 
 services:
   - postgresql
   - redis-server
 
 matrix:
+    fast_finish: true
     include:
         - python: 3.5
           env:
           - PYTHON_VERSION=python3.5
           - TOXENV=py35
+        - python: 3.6
+          env:
+          - PYTHON_VERSION=python3.6
+          - TOXENV=py36
+        - python: 3.6
+          env:
+          - PYTHON_VERSION=python3.6
+          - TOXENV=style
+    allow_failures:
+        - python: 3.6
+          env:
+          - PYTHON_VERSION=python3.6
+          - TOXENV=style
 
 # http://stackoverflow.com/a/19460794/315168
 cache:
   directories:
     # /home/travis/.cache/pip/wheels is the normal pip cache folder
     - $HOME/.cache/pip
-    - .tox
+    #- .tox
 
 install:
   - travis_retry pip install tox
 
 before_script:
-
+  - psql -c 'create database websauna_test;' -U postgres
   - pip install -U pip
 
-# https://docs.travis-ci.com/user/gui-and-headless-browsers/
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - psql -c 'create database blog_test;' -U postgres
+# Install chromedriver - https://sites.google.com/a/chromium.org/chromedriver/
+# This is not provided by Travis, but is needed by Selenium
+  - wget -N http://chromedriver.storage.googleapis.com/2.32/chromedriver_linux64.zip
+  - unzip chromedriver_linux64.zip
+  - chmod +x chromedriver
+  - sudo mv chromedriver /usr/bin
 
-# Downgrade Firefox until geckodriver + marionette matures
-  - tar -xjf /tmp/firefox-45.0.tar.bz2 --directory /tmp
-  - export PATH="/tmp/firefox:$PATH"
-  - echo "Using firefox version `firefox --version`"
+# Make chrome available as "chrome"
+  - sudo ln -s /usr/bin/google-chrome-stable /usr/bin/chrome
 
+  - echo "Using chrome version $(chrome --version) from $(which chrome)"
+  - echo "Using chromedriver version $(chromedriver --version) from $(which chromedriver)"
 
 script:
   # https://pypi.python.org/pypi/coverage_enable_subprocess
   - pip install coverage-enable-subprocess
   - export COVERAGE_PROCESS_START=$PWD/.coveragerc
-  - export PATH=$PATH:$PWD/geth/
-  - tox -- -x
+  # This env variable is passed to scaffold tests that test the tests themselves
+  - export SPLINTER_WEBDRIVER=chrome
+  - export TRAVIS=true
+  - tox -- --splinter-webdriver=chrome --splinter-headless=true --debug
 
 after_success:
   # Update coverage information in codecov.io.
+  # This will simply fail under py34.
   - .tox/py35/bin/codecov
   # Dump package list so we have a log of last known good version set
   # This will simply fail under py34.
   - .tox/py35/bin/pip freeze
-

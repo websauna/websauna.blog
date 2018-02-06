@@ -1,5 +1,7 @@
+# Pyramid
 from pyramid.config import Configurator
 
+# Websauna
 from websauna.system import Initializer
 from websauna.utils.autoevent import after
 from websauna.utils.autoevent import bind_events
@@ -8,7 +10,7 @@ from websauna.utils.autoevent import bind_events
 class AddonInitializer:
     """Configure this addon for websauna."""
 
-    def __init__(self, config:Configurator):
+    def __init__(self, config: Configurator):
         self.config = config
 
     @after(Initializer.configure_admin)
@@ -63,4 +65,3 @@ def includeme(config: Configurator):
     """
     addon_init = AddonInitializer(config)
     addon_init.run()
-
