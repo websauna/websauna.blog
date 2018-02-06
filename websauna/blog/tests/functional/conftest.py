@@ -1,10 +1,13 @@
 """py.test testing functional fixtures"""
 
-import pytest
+# Pyramid
 import transaction
-from websauna.utils.time import now
 
+import pytest
+
+# Websauna
 from websauna.blog.models import Post
+from websauna.utils.time import now
 
 
 @pytest.fixture

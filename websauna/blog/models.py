@@ -1,13 +1,17 @@
 """Place your SQLAlchemy models in this file."""
+# Standard Library
 from typing import List
 
+# SQLAlchemy
 import sqlalchemy as sa
 import sqlalchemy.dialects.postgresql as psql
-from slugify import slugify
-from websauna.system.model.json import NestedMutationDict
 
-from websauna.system.model.meta import Base
+from slugify import slugify
+
+# Websauna
 from websauna.system.model.columns import UTCDateTime
+from websauna.system.model.json import NestedMutationDict
+from websauna.system.model.meta import Base
 from websauna.utils.time import now
 
 

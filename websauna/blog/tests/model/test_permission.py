@@ -1,6 +1,8 @@
+# Pyramid
 from pyramid.interfaces import IAuthorizationPolicy
 from pyramid.security import Everyone
 
+# Websauna
 from websauna.blog.views import blog_container_factory
 
 
@@ -25,4 +27,3 @@ def test_published(test_request, published_post):
 
     assert post_resource.post.published_at
     assert policy.permits(post_resource, Everyone, "view")
-

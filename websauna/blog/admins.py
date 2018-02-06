@@ -1,5 +1,7 @@
 
-from websauna.system.admin.modeladmin import ModelAdmin, model_admin
+# Websauna
+from websauna.system.admin.modeladmin import ModelAdmin
+from websauna.system.admin.modeladmin import model_admin
 from websauna.system.crud import Base64UUIDMapper
 
 from .models import Post
