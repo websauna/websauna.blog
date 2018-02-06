@@ -14,5 +14,3 @@ def test_rss_feed(web_server: str, published_post_id):
     # We get body
     assert "All roads lead to Toholampi åäö" in resp.text
     assert resp.headers["content-type"] == "application/rss+xml; charset=UTF-8"
-
-

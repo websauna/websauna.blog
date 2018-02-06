@@ -3,9 +3,13 @@
 See https://github.com/svpino/rfeed
 """
 
-import rfeed
+# Pyramid
 from pyramid.response import Response
 from pyramid.view import view_config
+
+import rfeed
+
+# Websauna
 from websauna.utils.time import now
 
 from .views import BlogContainer
@@ -13,13 +17,13 @@ from .views import PostResource
 
 
 class Content(rfeed.Extension):
-    
+
     def get_namespace(self):
         return {"xmlns:content": "http://purl.org/rss/1.0/modules/content/"}
 
 
 class ContentItem(rfeed.Serializable):
-    
+
     def __init__(self, post_resource: PostResource):
         super(ContentItem, self).__init__()
         self.post_resource = post_resource
@@ -52,13 +56,13 @@ def generate_rss(blog_container: BlogContainer):
         items.append(item)
 
     feed = rfeed.Feed(
-        title = blog_title,
-        link = request.resource_url(blog_container, "rss"),
-        description = "",
-        language = "en-US",
-        lastBuildDate = now(),
-        items = items,
-        extensions = [Content()])
+        title=blog_title,
+        link=request.resource_url(blog_container, "rss"),
+        description="",
+        language="en-US",
+        lastBuildDate=now(),
+        items=items,
+        extensions=[Content()])
 
     return feed
 

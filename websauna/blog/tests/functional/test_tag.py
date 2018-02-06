@@ -1,6 +1,8 @@
 """Functional tests."""
 
+# SQLAlchemy
 from sqlalchemy.orm.session import Session
+
 from splinter.driver import DriverAPI
 
 

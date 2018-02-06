@@ -1,5 +1,6 @@
 """This contains app entry point for running a demo site for this addon or running functional tests for this addon."""
 
+# Websauna
 import websauna.system
 
 

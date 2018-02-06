@@ -1,6 +1,8 @@
 """Extra global template variables added by this addon."""
 
+# Pyramid
 from pyramid.events import BeforeRender
+
 from .views import blog_container_factory
 
 

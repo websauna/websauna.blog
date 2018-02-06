@@ -1,3 +1,4 @@
+# Websauna
 from websauna.blog.models import Post
 
 
@@ -17,4 +18,3 @@ def test_slugify(dbsession):
     assert post.ensure_slug(dbsession) == "hello-world-2"
     dbsession.add(post)
     dbsession.flush()
-

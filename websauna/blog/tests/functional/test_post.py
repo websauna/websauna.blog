@@ -1,8 +1,8 @@
 """Functional tests."""
-
+# SQLAlchemy
 from sqlalchemy.orm.session import Session
-from splinter.driver import DriverAPI
 
+from splinter.driver import DriverAPI
 
 
 def test_published_post(web_server: str, browser: DriverAPI, dbsession: Session, published_post_id):
