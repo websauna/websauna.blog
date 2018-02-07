@@ -149,7 +149,7 @@ class PostEditSchema(CSRFSchema):
 
     excerpt = colander.SchemaNode(colander.String(),
         description="Snippet of text shown in Google search, blog roll and RSS feed. Keep in 1-2 sentences.",
-        required = True,
+        required=True,
         widget=deform.widget.TextAreaWidget(),)
 
     tags = colander.SchemaNode(colander.String(),
@@ -164,7 +164,6 @@ class PostEditSchema(CSRFSchema):
     published_at = colander.SchemaNode(colander.DateTime(),
             required=False)
 
-
     def dictify(self, obj: Post) -> dict:
         """Serialize SQLAlchemy model instance to nested dictionary appstruct presentation."""
         appstruct = dictify(self, obj)
@@ -177,6 +176,7 @@ class PostEditSchema(CSRFSchema):
         appstruct["tags"] = ",".join([t.strip() for t in appstruct["tags"].split(",")])
 
         objectify(self, appstruct, obj)
+
 
 @view_overrides(context=PostAdmin.Resource)
 class PostEdit(DefaultEdit):
