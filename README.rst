@@ -1,9 +1,28 @@
-.. |ci| image:: https://travis-ci.org/websauna/websauna.blog.svg
-    :target: https://travis-ci.org/websauna/websauna.blog/
-
 This is a Python package for websauna.blog, an addon for `Websauna framework <https://websauna.org>`_. You can use it as a simple blog for your site or as an example of Websaunsa design patterns.
 
-|ci|
+.. |ci| image:: https://img.shields.io/travis/websauna/websauna.blog/master.svg?style=flat-square
+    :target: https://travis-ci.org/websauna/websauna.blog/
+
+.. |cov| image:: https://codecov.io/github/websauna/websauna.blog/coverage.svg?branch=master
+    :target: https://codecov.io/github/websauna/websauna.blog?branch=master
+
+.. |latest| image:: https://img.shields.io/pypi/v/websauna.blog.svg
+    :target: https://pypi.python.org/pypi/websauna.blog/
+    :alt: Latest Version
+
+.. |license| image:: https://img.shields.io/pypi/l/websauna.blog.svg
+    :target: https://pypi.python.org/pypi/websauna.blog/
+    :alt: License
+
+.. |versions| image:: https://img.shields.io/pypi/pyversions/websauna.blog.svg
+    :target: https://pypi.python.org/pypi/websauna.blog/
+    :alt: Supported Python versions
+
++-----------+-----------+-----------+
+| |versions|| |latest|  | |license| |
++-----------+-----------+-----------+
+| |ci|      | |cov|     |           |
++-----------+-----------+-----------+
 
 .. contents:: :local:
 
