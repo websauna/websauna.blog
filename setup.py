@@ -26,7 +26,7 @@ if len(sys.argv) >= 2:
 
 setup(
     name='websauna.blog',
-    version='1.0a1',
+    version='1.0a2.dev0',
     description='Blog add on for Websauna',
     long_description=README + '\n\n' + CHANGES,
     classifiers=[
