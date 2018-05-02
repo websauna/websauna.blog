@@ -1,0 +1,18 @@
+version: '3'
+services:
+  redis:
+    image: redis:3.2
+    ports:
+      - 6379:6379
+  postgres:
+    image: postgres:10
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/pgdata
+    environment:
+      POSTGRES_DB: blog_dev
+      POSTGRES_USER: ${USER}
+      POSTGRES_PASSWORD:
+      PGDATA: /var/lib/postgresql/data/pgdata
+

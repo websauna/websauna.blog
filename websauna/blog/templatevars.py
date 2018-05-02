@@ -1,9 +1,11 @@
 """Extra global template variables added by this addon."""
 
+# Thirdparty Library
 # Pyramid
 from pyramid.events import BeforeRender
 
-from .views import blog_container_factory
+# Websauna's Blog Addon
+from websauna.blog.resources import blog_container_factory
 
 
 def blog_container(request):

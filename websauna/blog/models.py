@@ -1,12 +1,21 @@
-"""Place your SQLAlchemy models in this file."""
-# Standard Library
-from typing import List
+"""``websauna.blog`` models.
 
-# SQLAlchemy
+DB relation model:
+
+.. uml::
+
+    @startuml
+    left to right direction
+    User --{ Post
+    Post --{ AssociationPostsTags
+    Tag --{ AssociationPostsTags
+    @enduml
+
+"""
+
+# Thirdparty Library
 import sqlalchemy as sa
 import sqlalchemy.dialects.postgresql as psql
-
-from slugify import slugify
 
 # Websauna
 from websauna.system.model.columns import UTCDateTime
@@ -15,71 +24,94 @@ from websauna.system.model.meta import Base
 from websauna.utils.time import now
 
 
+ADDON_PREFIX = 'blog_'
+
+
+class AssociationPostsTags(Base):
+    """Model to associate ``posts`` with ``tags``."""
+
+    __tablename__ = ADDON_PREFIX + "association_posts_tags"
+
+    #: Post id. :class:`uuid.UUID`
+    post_id = sa.Column(psql.UUID(as_uuid=True), sa.ForeignKey("blog_posts.id"), primary_key=True)
+
+    #: Tag id. :class:`uuid.UUID`
+    tag_id = sa.Column(psql.UUID(as_uuid=True), sa.ForeignKey("blog_tags.id"), primary_key=True)
+
+
 class Post(Base):
+    """Post model."""
 
-    __tablename__ = "blog_post"
+    __tablename__ = ADDON_PREFIX + "posts"
 
+    #: Auto-generated post id. :class:`uuid.UUID`
     id = sa.Column(psql.UUID(as_uuid=True), primary_key=True, server_default=sa.text("uuid_generate_v4()"))
 
+    #: When post was created. :class:`UTCDateTime <websauna.system.model.columns.UTCDateTime>`
     created_at = sa.Column(UTCDateTime, default=now, nullable=False)
 
-    #: When this post was made public. If this is set the post is considered to be public, otherwise it's only admin accessible draft.
+    #: When post was made public. :class:`UTCDateTime <websauna.system.model.columns.UTCDateTime>`
     published_at = sa.Column(UTCDateTime, default=None, nullable=True)
 
-    #: When this post wast last edited
+    #: When post wast last edited. :class:`UTCDateTime <websauna.system.model.columns.UTCDateTime>`
     updated_at = sa.Column(UTCDateTime, nullable=True, onupdate=now)
 
-    #: Human readable title
+    #: Post's state, based on this value ``workflow`` determinate post's ``ACL``.
+    #:  Basically, field makes post public or private. :class:`str`
+    state = sa.Column(sa.String(128), nullable=False, default="private", index=True)
+
+    #: Human readable title. :class:`str`
     title = sa.Column(sa.String(256), nullable=False)
 
-    #: Shown in the blog roll, RSS feed
+    #: Shown in the blog roll, RSS feed. :class:`str`
     excerpt = sa.Column(sa.Text(), nullable=False, default="")
 
-    #: Full body text as Markdown, shown on the post page
+    #: Full body text, shown on the post page. :class:`str`
     body = sa.Column(sa.Text(), nullable=False, default="")
 
-    #: URL identifier string
+    #: URL identifier string. :class:`str`
     slug = sa.Column(sa.String(256), nullable=False, unique=True)
 
-    #: Author name as plain text
-    author = sa.Column(sa.String(256), nullable=True)
+    #: Post's author. :class:`User <websauna.system.user.models.User>`
+    author = sa.orm.relationship("User")
+    author_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
 
-    #: Tags stored as comma separated string. Please note that in the long run this should be changed to JSONB list . This is now plain text due to simplicity of demostration.
-    tags = sa.Column(sa.String(256), nullable=False, default="")
+    #: List of post's tags. [:class:`~.Tag`, ...]
+    tags = sa.orm.relationship("Tag", secondary=AssociationPostsTags.__tablename__, back_populates="posts")
 
-    #: Mixed bag of all other properties
+    #: Mixed ``jsonb`` bag of all other properties. :class:`dict`
     other_data = sa.Column(NestedMutationDict.as_mutable(psql.JSONB), default=dict)
 
     # By default order latest posts first
-    __mapper_args__ = {
-        "order_by": created_at.desc()
-    }
+    __mapper_args__ = {"order_by": created_at.desc()}
 
-    def ensure_slug(self, dbsession) -> str:
-        """Make sure post has a slug.
+    #: Logger efficient representation of model object.
+    def __repr__(self) -> str:
+        return "#{}: {}".format(self.id, self.title)
 
-        Generate a slug based on the title, but only if blog post doesn't have one.
+    #: Human friendly representation of model object.
+    def __str__(self) -> str:
+        return self.title
 
-        :return: Generated slug as a string
-        """
 
-        assert self.title
+class Tag(Base):
+    """Tag model."""
 
-        if self.slug:
-            return
+    __tablename__ = ADDON_PREFIX + "tags"
 
-        for attempt in range(1, 100):
+    #: Auto-generated post id. :class:`uuid.UUID`
+    id = sa.Column(psql.UUID(as_uuid=True), server_default=sa.text("uuid_generate_v4()"), primary_key=True)
 
-            generated_slug = slugify(self.title)
-            if attempt >= 2:
-                generated_slug += "-" + str(attempt)
+    #: Human readable title, tag's text. :class:`str`
+    title = sa.Column(sa.String(256), unique=True, nullable=False)
 
-            # Check for existing hit
-            if not dbsession.query(Post).filter_by(slug=generated_slug).one_or_none():
-                self.slug = generated_slug
-                return self.slug
+    #: List of tag's tags. [:class:`~.Post`, ...]
+    posts = sa.orm.relationship("Post", secondary=AssociationPostsTags.__tablename__, back_populates="tags")
 
-        raise RuntimeError("Could not generate slug for {}".format(self.title))
+    #: Logger efficient representation of model object.
+    def __repr__(self) -> str:
+        return "#{}: {}".format(self.id, self.title)
 
-    def get_tag_list(self) -> List[str]:
-        return self.tags.split(",")
+    #: Human friendly representation of model object.
+    def __str__(self) -> str:
+        return self.title

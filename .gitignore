@@ -36,3 +36,8 @@ perma-asset
 .tox
 .eggs
 
+.coverage
+.pytest_cache/
+htmlcov/
+
+_build

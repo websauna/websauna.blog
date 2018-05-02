@@ -7,7 +7,7 @@
   {% include "blog/admin_panel.html" %}
 
   <h1 id="heading-tag">Posts tagged {{ tag }}</h1>
-  {% with posts=tagged_posts %}
+  {% with posts=batch.items %}
     {% include "blog/blog_roll_content.html" %}
   {% endwith %}
 
