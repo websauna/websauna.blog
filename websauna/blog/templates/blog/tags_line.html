@@ -1,6 +1,6 @@
-{% if post_resource.post.get_tag_list() %}
+{% if post_resource.post.tags %}
   <span class="tags-line">
     Tagged under
-    {% for tag in post_resource.post.get_tag_list() %}<a href="{{ "blog_tag"|route_url(tag=tag) }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}{% endfor %}.
+    {% for tag in post_resource.post.tags %}<a href="{{ "blog_tag"|route_url(tag=tag) }}">{{ tag }}</a>{% if not loop.last %}, {% endif %}{% endfor %}.
   </span>
 {% endif %}

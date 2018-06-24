@@ -46,13 +46,14 @@
 {% block blog_content %}
 
   {% if request.has_permission("edit") %}
-    <div class="well">
+    <div class="well well-sm">
 
       <p>Admin actions</p>
 
       <a class="btn btn-danger" href="{{ post_resource.post|admin_url }}">
         View in admin
       </a>
+
     </div>
   {% endif %}
 
@@ -63,7 +64,7 @@
   {% include "blog/byline.html" %}
 
   <div id="post-body-text">
-    {{ post_resource.get_body_as_html()|safe }}
+    {{ post_resource.get_body()|safe }}
   </div>
 
   {% include "blog/commenting.html" %}

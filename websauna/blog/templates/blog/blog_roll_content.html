@@ -1,6 +1,4 @@
 {# Main loop to render all posts. #}
-
-
 {% if posts %}
   {% for post_resource in posts %}
     <div class="post">
@@ -9,18 +7,12 @@
           {{ post_resource.post.title }}
         </a>
       </h2>
-
       {% include "blog/byline.html" %}
-
       <div class="excerpt">
         {{ post_resource.post.excerpt }}
       </div>
-
-
-
     </div>
   {% endfor %}
-
   {% block paginator %}
     {% include "crud/paginator.html" %}
   {% endblock %}

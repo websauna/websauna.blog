@@ -1,12 +1,13 @@
 {% with post=post_resource.post %}
-  {% if post.published_at %}
-    <p class="text-muted">
-      By {{ post.author }} {{ (post.published_at or post.created_at)|friendly_time }}.
-      {% include "blog/tags_line.html" %}
-    </p>
-  {% else %}
+  <p class="text-muted">
+    By {{ post.author }} {{ (post.published_at or post.created_at)|friendly_time }}.
+    {% include "blog/tags_line.html" %}
+  </p>
+  <!-- TODO: replace all published_at with state -->
+  {% if not post.published_at %}
     <p class="text-danger">
       This post is a draft.
     </p>
+  {% else %}
   {% endif %}
 {% endwith %}

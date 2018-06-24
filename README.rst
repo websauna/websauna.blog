@@ -29,34 +29,16 @@ This is a Python package for websauna.blog, an addon for `Websauna framework <ht
 Features
 ========
 
-* Markdown based editing
-
+* WYSWIYG based editing
+* Tagging system
 * `Disqus <https://disqus.com>`_ based commenting
-
 * Post description and meta for Google (SEO), Facebook, Twitter. Sitemap support and Google Article metadata support.
-
 * Blog post management through Websauna admin interface
-
 * Drafts (admin only visible) and published posts
-
 * RSS feed
-
-* Basic unit and functional test suite
+* Unit and functional test suite with almost 100% coverage
 
 Note that this addon is not intended to be used as is, but more of an example. You most likely want to fork it over and modify for your own needs.
-
-Screenshots
-===========
-
-Blog post
----------
-
-.. image:: https://github.com/websauna/websauna.blog/raw/master/screenshots/post.png
-
-Admin
------
-
-.. image:: https://github.com/websauna/websauna.blog/raw/master/screenshots/admin.png
 
 Installation
 ============
@@ -130,12 +112,24 @@ Running the development website
 Local development machine
 -------------------------
 
+
 Example (OSX / Homebrew)::
 
     psql create blog_dev
     ws-sync-db websauna/blog/conf/development.ini
     ws-create-user websauna/blog/conf/development.ini admin@example.com mypassword
     ws-pserve websauna/blog/conf/development.ini --reload
+
+Creating fake content for development
+-------------------------------------
+
+``websauna.blog`` addon provide console script ``ws-blog-createcontent`` for
+creating any amount of dummy content for testing/development purposes:
+
+.. code-block:: bash
+
+    pip install -e .[test]
+    ws-blog-createcontent websauna/blog/conf/development.ini
 
 
 Running the test suite
@@ -158,3 +152,18 @@ More information
 ================
 
 Please see https://websauna.org/
+
+
+Screenshots
+===========
+
+Blog post
+---------
+
+.. image:: https://github.com/websauna/websauna.blog/raw/master/screenshots/post.png
+
+Admin
+-----
+
+.. image:: https://github.com/websauna/websauna.blog/raw/master/screenshots/admin.png
+

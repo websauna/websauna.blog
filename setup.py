@@ -6,6 +6,7 @@ from os import path
 from setuptools import find_packages
 from setuptools import setup
 
+
 assert sys.version_info >= (3, 5, 2), "Websauna needs Python 3.5.2 or newer, you have {version}".format(
     version=sys.version_info)
 
@@ -55,8 +56,8 @@ setup(
     test_suite='websauna.blog',
     install_requires=[
         'websauna',
-        'Markdown',
-        'rfeed'
+        'rfeed',
+        'docopt',
     ],
     extras_require={
         # Dependencies for running test suite
@@ -73,6 +74,8 @@ setup(
             'pytest-splinter',
             'pytest-timeout',
             'webtest',
+            'factory_boy<=2.8.1',  # have dependency on internals...
+            'pytest-cov',
         ],
         # Dependencies to make releases
         'dev': [
@@ -81,14 +84,17 @@ setup(
             'sphinx-autodoc-typehints',
             'sphinx_rtd_theme',
             'sphinxcontrib-zopeext',
-            'zest.releaser[recommended]'
+            'sphinxcontrib-plantuml',
+            'zest.releaser[recommended]',
         ],
     },
 
     # Define where this application starts as referred by WSGI web servers
-    entry_points={
-        'paste.app_factory': [
-            'main = websauna.blog.demo:main'
-        ],
-    }
+    entry_points="""
+        [paste.app_factory]
+        main = websauna.blog.demo:main
+
+        [console_scripts]
+        ws-blog-createcontent = websauna.blog.scripts.createcontent:main
+    """
 )
