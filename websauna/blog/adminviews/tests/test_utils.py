@@ -27,7 +27,7 @@ def test_slugify_spin(dbsession, fakefactory):
 
 
 def test_slugify_was_not_to_generate(dbsession, fakefactory):
-    is_slug_already_exists = MagicMock(return_value=True)
+    uniqueness_checker = MagicMock(return_value=True)
     with pytest.raises(RuntimeError):
-        assert slugify("a", None, None, MagicMock(return_value=3), is_slug_already_exists=is_slug_already_exists)
-    assert is_slug_already_exists.call_count == 99
+        assert slugify("a", None, None, MagicMock(return_value=3), uniqueness_checker=uniqueness_checker)
+    assert uniqueness_checker.call_count == 99
