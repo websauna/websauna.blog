@@ -73,6 +73,7 @@ setup(
             'pytest-splinter',
             'pytest-timeout',
             'webtest',
+            'factory_boy',
         ],
         # Dependencies to make releases
         'dev': [
@@ -81,7 +82,7 @@ setup(
             'sphinx-autodoc-typehints',
             'sphinx_rtd_theme',
             'sphinxcontrib-zopeext',
-            'zest.releaser[recommended]'
+            'zest.releaser[recommended]',
         ],
     },
 

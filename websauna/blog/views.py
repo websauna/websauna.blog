@@ -20,7 +20,6 @@ from websauna.system.core.root import Root
 from websauna.system.core.traversal import Resource
 from websauna.system.core.views.redirect import redirect_view
 from websauna.system.crud.paginator import DefaultPaginator
-
 from websauna.system.http import Request
 
 from .models import Post
