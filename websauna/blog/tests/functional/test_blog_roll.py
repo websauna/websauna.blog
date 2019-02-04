@@ -54,7 +54,7 @@ def test_published_posts_in_blog_roll(web_server: str, browser: DriverAPI, dbses
     assert post_line.find_by_css('.excerpt').text == post.excerpt
     assert (
         post_line.find_by_css('.text-muted').text ==
-        'By {} just now. Tagged under {}.'.format(post.author, post.tags)
+        'By {} just now. Tagged under {}.'.format(post.author, ', '.join(map(str, post.tags)))
     )
 
     # user can navigate to post by clicking on its title on blog-roll page

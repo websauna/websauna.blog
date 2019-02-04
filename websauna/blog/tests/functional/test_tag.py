@@ -1,7 +1,6 @@
 """Functional tests."""
 # Standard Library
 import random
-from uuid import uuid4
 
 # Pyramid
 import transaction
@@ -32,8 +31,8 @@ def test_visitor_sees_only_relevant_posts_in_tag_roll(
     """Visitors should not see unpublished posts in blog roll."""
 
     with transaction.manager:
-        tag = uuid4().hex
-        post = fakefactory.PostFactory(public=True, tags=tag)
+        tag = fakefactory.TagFactory()
+        post = fakefactory.PostFactory(public=True, tags=[tag])
         fakefactory.PostFactory()
         dbsession.expunge_all()
 
@@ -48,8 +47,8 @@ def test_visitor_sees_only_published_posts_in_tag_roll(
     """Visitors should not see unpublished posts in blog roll."""
 
     with transaction.manager:
-        tag = uuid4().hex
-        fakefactory.PostFactory(private=True, tags=tag)
+        tag = fakefactory.TagFactory()
+        fakefactory.PostFactory(private=True, tags=[tag])
         dbsession.expunge_all()
 
     browser.visit(web_server + "/blog/tag/{}".format(tag.title))
@@ -60,8 +59,8 @@ def test_tag_roll_pagination(web_server: str, browser: DriverAPI, dbsession: Ses
     """When posts exceed batch size, pagination is activated. Test that it's sane."""
     posts_per_page = 20
     with transaction.manager:
-        tag = uuid4().hex
-        posts = fakefactory.PostFactory.create_batch(100, public=True, tags=tag)
+        tag = fakefactory.TagFactory()
+        posts = fakefactory.PostFactory.create_batch(100, public=True, tags=[tag])
         dbsession.expunge_all()
 
     browser.visit(web_server + "/blog/tag/{}".format(tag))
@@ -71,17 +70,19 @@ def test_tag_roll_pagination(web_server: str, browser: DriverAPI, dbsession: Ses
 def test_posts_are_listed_in_publication_order(
     web_server: str, browser: DriverAPI, dbsession: Session, fakefactory
 ):
-    """Post are listed in publication order on blog-roll."""
+    """Post are listed in publication order on tag-roll."""
 
     dates_span = arrow.Arrow.range("hour", arrow.get(2013, 5, 5, 0, 0), arrow.get(2013, 5, 5, 19, 0))[::-1]
     with transaction.manager:
-        tag = uuid4().hex
-        posts = fakefactory.PostFactory.create_batch(len(dates_span), public=True, tags=tag)
+        tag = fakefactory.TagFactory()
+        posts = fakefactory.PostFactory.create_batch(len(dates_span), public=True, tags=[tag])
         random.shuffle(posts)  # make sure that creation order is not the same as publication order
         for post, date in zip(posts, dates_span):
             post.published_at = date.datetime
-        expected_posts_titles = [i.title for i in posts]
+        dbsession.flush()
+        dbsession.expunge_all()
 
+    expected_posts_titles = [i.title for i in posts]
     browser.visit(web_server + "/blog/tag/{}".format(tag))
 
     rendered_posts_titles = [i.text for i in browser.find_by_css(".post h2")]
@@ -94,8 +95,8 @@ def test_title_and_breadcrumbs(
     """Checking that breadcrumbs and post-roll title are displayed correctly."""
 
     with transaction.manager:
-        tag = uuid4().hex
-        fakefactory.PostFactory(public=True, tags=tag)
+        tag = fakefactory.TagFactory()
+        fakefactory.PostFactory(public=True, tags=[tag])
         dbsession.expunge_all()
 
     blog_title = 'Posts tagged {}'.format(tag)

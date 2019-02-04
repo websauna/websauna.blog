@@ -63,7 +63,7 @@ setup(
         'test': [
             'codecov',
             'flake8',
-            'pytest>=3.0',
+            'pytest>=3.0,<4',  # pytest limited to version 3 because of the issue https://github.com/pytest-dev/pytest-splinter/issues/112
             'pytest-runner',
             'coverage',
             'flaky',
