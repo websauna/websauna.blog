@@ -2,6 +2,7 @@
 
 # Standard Library
 from uuid import uuid4
+from random import randint
 
 # Pyramid
 from pyramid.threadlocal import get_current_registry
@@ -57,7 +58,7 @@ class BaseFactory(factory.alchemy.SQLAlchemyModelFactory):
 
     class Meta:
         sqlalchemy_session = DB_SESSION
-        force_flush = True
+        sqlalchemy_session_persistence = 'flush'
         abstract = True
 
 
@@ -107,7 +108,7 @@ class PostFactory(BaseFactory):
     author = factory.Faker('name')
     slug = factory.LazyAttribute(lambda obj: uuid4().hex)
     created_at = factory.Faker('date_this_decade')
-    tags = factory.Sequence(lambda n: 'tag-%d' % n)
+    tags = factory.LazyFunction(lambda: [TagFactory() for i in range(randint(1, 6))])
 
     class Meta:
         model = models.Post
@@ -123,3 +124,12 @@ class PostFactory(BaseFactory):
         private = factory.Trait(
             published_at=None
         )
+
+
+class TagFactory(BaseFactory):
+    """Factory for creating dummy Posts."""
+
+    title = factory.Faker("slug")
+
+    class Meta:
+        model = models.Tag

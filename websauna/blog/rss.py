@@ -30,7 +30,7 @@ class ContentItem(rfeed.Serializable):
 
     def publish(self, handler):
         super(ContentItem, self).publish(handler)
-        html = self.post_resource.get_body_as_html()
+        html = self.post_resource.post.excerpt
         self._write_element("content:encoded", html)
 
 

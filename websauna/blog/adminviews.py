@@ -23,12 +23,45 @@ from websauna.system.form.csrf import CSRFSchema
 from websauna.system.form.resourceregistry import ResourceRegistry
 from websauna.system.form.schema import dictify
 from websauna.system.form.schema import objectify
+from websauna.system.form.sqlalchemy import UUIDModelSet
 from websauna.system.http import Request
 from websauna.utils.time import now
+from websauna.utils.slug import SlugDecodeError
+from websauna.utils.slug import slug_to_uuid
+from websauna.utils.slug import uuid_to_slug
 
 from .admins import PostAdmin
+from .admins import TagAdmin
 from .models import Post
+from .models import Tag
 from .views import get_post_resource
+
+
+@colander.deferred
+def deferred_tags_widget(_, kw):
+    """Select tags widget."""
+    dbsession = kw["request"].dbsession
+    vocab = [(uuid_to_slug(tag_id), title) for tag_id, title in dbsession.query(Tag.id, Tag.title).all()]
+    return deform.widget.Select2Widget(values=vocab, multiple=True, tags=True, css_class="tags-select2w")
+
+
+class TagCreationalUUIDModelSet(UUIDModelSet):
+    """Allow create ``Tag`` objects on a fly."""
+
+    def preprocess_cstruct_values(self, node, cstruct):
+        """Decode tag's slug to uuid, in case if can't decode create a new Tag."""
+        dbsession = self.get_dbsession(node)
+        items = []
+        for value in cstruct:
+            try:
+                uuid = slug_to_uuid(value)
+            except SlugDecodeError:
+                tag = Tag(title=value)
+                dbsession.add(tag)
+                dbsession.flush()
+                uuid = tag.id
+            items.append(uuid)
+        return items
 
 
 @colander.deferred
@@ -70,24 +103,28 @@ class PostSchema(CSRFSchema):
 
     author = colander.SchemaNode(colander.String(), description="The name of the author", required=True)
 
-    slug = colander.SchemaNode(colander.String(),
+    slug = colander.SchemaNode(
+        colander.String(),
         validator=deferred_is_good_slug,
         missing=None,
         description="Blog post URL identifier. Leave empty to automatically generate from title")
 
-    excerpt = colander.SchemaNode(colander.String(),
+    excerpt = colander.SchemaNode(
+        colander.String(),
         description="Snippet of text shown in Google search, blog roll and RSS feed. Keep in 1-2 sentences.",
         required=True,
         widget=deform.widget.TextAreaWidget(),)
 
-    tags = colander.SchemaNode(colander.String(),
-            description="Comma separated list.",
-            missing="")
+    tags = colander.SchemaNode(
+        TagCreationalUUIDModelSet(model=Tag, match_column="id"),
+        widget=deferred_tags_widget,
+        missing=None)
 
-    body = colander.SchemaNode(colander.String(),
-            description="Use Markdown formatting.",
-            required=True,
-            widget=deform.widget.TextAreaWidget(rows=40, css_class="body-text"))
+    body = colander.SchemaNode(
+        colander.String(),
+        description="Use Markdown formatting.",
+        required=True,
+        widget=deform.widget.TextAreaWidget(rows=40, css_class="body-text"))
 
     def dictify(self, obj: Post) -> dict:
         """Serialize SQLAlchemy model instance to nested dictionary appstruct presentation."""
@@ -96,10 +133,6 @@ class PostSchema(CSRFSchema):
 
     def objectify(self, appstruct: dict, obj: Post):
         """Store the dictionary data from the form submission on the object."""
-
-        # Clean tag list
-        appstruct["tags"] = ",".join([t.strip() for t in appstruct["tags"].split(",")])
-
         objectify(self, appstruct, obj)
 
 
@@ -142,27 +175,30 @@ class PostEditSchema(CSRFSchema):
 
     author = colander.SchemaNode(colander.String(), description="The name of the author", required=True)
 
-    slug = colander.SchemaNode(colander.String(),
+    slug = colander.SchemaNode(
+        colander.String(),
         validator=deferred_is_good_slug,
         missing=None,
         description="Blog post URL identifier. Leave empty to automatically generate from title")
 
-    excerpt = colander.SchemaNode(colander.String(),
+    excerpt = colander.SchemaNode(
+        colander.String(),
         description="Snippet of text shown in Google search, blog roll and RSS feed. Keep in 1-2 sentences.",
         required=True,
         widget=deform.widget.TextAreaWidget(),)
 
-    tags = colander.SchemaNode(colander.String(),
-            description="Comma separated list.",
-            missing="")
+    tags = colander.SchemaNode(
+        TagCreationalUUIDModelSet(model=Tag, match_column="id"),
+        widget=deferred_tags_widget,
+        missing=None)
 
-    body = colander.SchemaNode(colander.String(),
-            description="Use Markdown formatting.",
-            required=True,
-            widget=deform.widget.TextAreaWidget(rows=40, css_class="body-text"))
+    body = colander.SchemaNode(
+        colander.String(),
+        description="Use Markdown formatting.",
+        required=True,
+        widget=deform.widget.TextAreaWidget(rows=40, css_class="body-text"))
 
-    published_at = colander.SchemaNode(colander.DateTime(),
-            required=False)
+    published_at = colander.SchemaNode(colander.DateTime(), required=False)
 
     def dictify(self, obj: Post) -> dict:
         """Serialize SQLAlchemy model instance to nested dictionary appstruct presentation."""
@@ -171,10 +207,6 @@ class PostEditSchema(CSRFSchema):
 
     def objectify(self, appstruct: dict, obj: Post):
         """Store the dictionary data from the form submission on the object."""
-
-        # Clean tag list
-        appstruct["tags"] = ",".join([t.strip() for t in appstruct["tags"].split(",")])
-
         objectify(self, appstruct, obj)
 
 
@@ -235,3 +267,20 @@ def change_publish_status(context: PostAdmin.Resource, request: Request):
 
     # Back to show page
     return HTTPFound(request.resource_url(context, "show"))
+
+
+def tag_navigate_url_getter(request, resource):
+    # TODO: move all strings to ENUMs
+    return request.route_url("blog_tag", tag=resource.obj.title)
+
+
+@view_overrides(context=TagAdmin)
+class TagListing(DefaultListing):
+    """Show blog tags."""
+
+    table = listing.Table(
+        columns=[
+            listing.Column("title", "Title", navigate_url_getter=tag_navigate_url_getter),
+            listing.ControlsColumn(name="Admin Actions"),
+        ]
+    )

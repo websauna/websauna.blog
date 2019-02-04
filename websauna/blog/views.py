@@ -23,6 +23,7 @@ from websauna.system.crud.paginator import DefaultPaginator
 from websauna.system.http import Request
 
 from .models import Post
+from .models import Tag
 
 
 logger = logging.getLogger(__name__)
@@ -99,9 +100,13 @@ class BlogContainer(Resource):
 
     def get_posts_by_tag(self, tag: str) -> Iterable[PostResource]:
         """Lists all posts by a tag within the permissions of a current user."""
-        for resource in self.get_posts():
-            if tag in resource.post.get_tag_list():
-                yield resource
+        dbsession = self.request.dbsession
+        tag_obj = dbsession.query(Tag).filter_by(title=tag).one_or_none()
+        if tag_obj:
+            for post in tag_obj.posts:
+                resource = self.wrap_post(post)
+                if self.request.has_permission("view", resource):
+                    yield resource
 
     def items(self):
         """Sitemap support."""

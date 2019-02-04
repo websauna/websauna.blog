@@ -15,9 +15,24 @@ from websauna.system.model.meta import Base
 from websauna.utils.time import now
 
 
+ADDON_PREFIX = 'blog_'
+
+
+class AssociationPostsTags(Base):
+    """Model to associate ``posts`` with ``tags``."""
+
+    __tablename__ = ADDON_PREFIX + "association_posts_tags"
+
+    #: Post id. :class:`uuid.UUID`
+    post_id = sa.Column(psql.UUID(as_uuid=True), sa.ForeignKey("blog_post.id"), primary_key=True)
+
+    #: Tag id. :class:`uuid.UUID`
+    tag_id = sa.Column(psql.UUID(as_uuid=True), sa.ForeignKey("blog_tag.id"), primary_key=True)
+
+
 class Post(Base):
 
-    __tablename__ = "blog_post"
+    __tablename__ = ADDON_PREFIX + "post"
 
     id = sa.Column(psql.UUID(as_uuid=True), primary_key=True, server_default=sa.text("uuid_generate_v4()"))
 
@@ -44,8 +59,8 @@ class Post(Base):
     #: Author name as plain text
     author = sa.Column(sa.String(256), nullable=True)
 
-    #: Tags stored as comma separated string. Please note that in the long run this should be changed to JSONB list . This is now plain text due to simplicity of demostration.
-    tags = sa.Column(sa.String(256), nullable=False, default="")
+    #: List of post's tags. [:class:`~.Tag`, ...]
+    tags = sa.orm.relationship("Tag", secondary=AssociationPostsTags.__tablename__, back_populates="posts")
 
     #: Mixed bag of all other properties
     other_data = sa.Column(NestedMutationDict.as_mutable(psql.JSONB), default=dict)
@@ -82,4 +97,27 @@ class Post(Base):
         raise RuntimeError("Could not generate slug for {}".format(self.title))
 
     def get_tag_list(self) -> List[str]:
-        return self.tags.split(",")
+        return self.tags
+
+
+class Tag(Base):
+    """Tag model."""
+
+    __tablename__ = ADDON_PREFIX + "tag"
+
+    #: Auto-generated post id. :class:`uuid.UUID`
+    id = sa.Column(psql.UUID(as_uuid=True), server_default=sa.text("uuid_generate_v4()"), primary_key=True)
+
+    #: Human readable title, tag's text. :class:`str`
+    title = sa.Column(sa.String(256), unique=True, nullable=False)
+
+    #: List of tag's tags. [:class:`~.Post`, ...]
+    posts = sa.orm.relationship("Post", secondary=AssociationPostsTags.__tablename__, back_populates="tags", order_by=Post.published_at.desc())
+
+    #: Logger efficient representation of model object.
+    def __repr__(self) -> str:
+        return "#<Tag {}>: {}".format(self.id, self.title)
+
+    #: Human friendly representation of model object.
+    def __str__(self) -> str:
+        return self.title
